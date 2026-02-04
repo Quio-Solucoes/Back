@@ -1,7 +1,7 @@
 import pandas as pd
 from models import Movel, Componente
 
-ARQUIVO = r"C:\Users\a2016825\ML\Archi\Arquitetura\orcamento_final.xlsx"
+ARQUIVO = "\orcamento_final.xlsx"
 
 
 def _parse_preco(valor):
@@ -77,5 +77,6 @@ def buscar_catalogo_componentes():
                 "preco_unitario": _parse_preco(r["preco_unitario"]),
             }
         )
+
 
     return catalogo
