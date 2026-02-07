@@ -27,7 +27,6 @@ name: Build and Push to ECR
 on:
   push:
     branches: [ "main" ]
-
 env:
   AWS_REGION: us-east-2
   ECR_REPOSITORY: quio-back
