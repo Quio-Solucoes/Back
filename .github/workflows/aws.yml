@@ -60,5 +60,5 @@ jobs:
       run: |
           aws ecs update-service \
           --cluster quio-cluster \
-          --service kiosk-service \
+          --service quio-service \
           --force-new-deployment
