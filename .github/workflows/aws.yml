@@ -56,9 +56,4 @@ jobs:
           ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPOSITORY:latest
         docker push \
           ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com/$ECR_REPOSITORY:latest
-    - name: Force new ECS deployment
-      run: |
-          aws ecs update-service \
-          --cluster quio-cluster \
-          --service quio-service \
-          --force-new-deployment
+    
