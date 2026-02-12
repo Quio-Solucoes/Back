@@ -1,5 +1,5 @@
+import os
 from pathlib import Path
-from fastapi.middleware.cors import CORSMiddleware
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 EXCEL_FILE = BASE_DIR / "orcamento_final.xlsx"
@@ -10,12 +10,8 @@ CORS_ORIGINS = [
     "http://127.0.0.1:3000",
 ]
 
-app.add_middleware(
-    CORSMiddleware,
-    # Se você quer liberar "o resto", use ["*"]
-    allow_origins=["*"], 
-    # IMPORTANTE: Se usar ["*"], allow_credentials deve ser False
-    allow_credentials=False, 
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Development default: libera qualquer origem.
+# Defina CORS_ALLOW_ALL=false para voltar ao modo restrito por lista.
+CORS_ALLOW_ALL = os.getenv("CORS_ALLOW_ALL", "true").lower() == "true"
+
+
