@@ -8,6 +8,8 @@ ORCAMENTOS_DIR = BASE_DIR / "orcamentos"
 CORS_ORIGINS = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
+    "https://www.quio.com.br",
+    "https://quio.com.br",
 ]
 
 app.add_middleware(
