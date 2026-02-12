@@ -1,14 +1,10 @@
-﻿from fastapi import APIRouter
+from fastapi import APIRouter
 
-from app.features.chat.service import conversas
+from app.features.conversations.service import resetar_conversa
 
-router = APIRouter()
+router = APIRouter(prefix="/conversations", tags=["conversations"])
 
 
 @router.post("/reset/{session_id}")
-def reset_conversa(session_id: str):
-    if session_id in conversas:
-        del conversas[session_id]
-        return {"response": "? Conversa resetada com sucesso!"}
-    return {"response": "?? Conversa não encontrada."}
-
+def reset_conversation(session_id: str) -> dict:
+    return resetar_conversa(session_id)
