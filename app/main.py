@@ -1,26 +1,32 @@
-﻿from fastapi import FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.features.chat.router import router as chat_router
 from app.features.conversations.router import router as conversations_router
 from app.features.health.router import router as health_router
-
-app = FastAPI(title="Quio Back", version="1.0.0")
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_credentials=True,
-    allow_methods=["POST", "OPTIONS", "GET"],
-    allow_headers=["Content-Type"],
-)
-
-app.include_router(chat_router, tags=["chat"])
-app.include_router(health_router, tags=["health"])
-app.include_router(conversations_router, tags=["conversations"])
+from app.features.orcamento.router import router as orcamento_router
+from app.features.system.router import router as system_router
+from app.config.settings import CORS_ORIGINS
 
 
-@app.get("/")
-def index():
-    return {"status": "ok", "message": "Backend FastAPI online"}
+def create_app() -> FastAPI:
+    application = FastAPI(title="Quio Solucoes API", version="1.0.0")
 
+    application.add_middleware(
+        CORSMiddleware,
+        allow_origins=CORS_ORIGINS,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
+
+    application.include_router(chat_router)
+    application.include_router(orcamento_router)
+    application.include_router(system_router)
+    application.include_router(conversations_router)
+    application.include_router(health_router)
+
+    return application
+
+
+app = create_app()
