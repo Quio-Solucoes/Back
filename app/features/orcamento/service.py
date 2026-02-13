@@ -1,10 +1,10 @@
 from fastapi import HTTPException
 
-from app.domain.models import Componente
-from app.domain.states import ESTADOS
+from app.features.ambientes.componentes.model import Componente
+from app.features.chat.enum_states import ESTADOS
 from app.features.chat.helpers_tabbles import normalizar
 from app.features.conversations.store import get_conversa
-from app.features.orcamento.repositories.catalog_repository import buscar_catalogo_componentes
+from app.features.orcamento.catalog.repository import buscar_catalogo_componentes
 
 
 CATALOGO = buscar_catalogo_componentes()
@@ -134,3 +134,16 @@ def editar_dimensao(session_id: str, movel_id: int, largura: float, altura: floa
     movel.recalcular_preco_por_area()
 
     return {"success": True}
+
+
+def status_orcamento(session_id: str) -> dict:
+    conversa = get_conversa(session_id)
+
+    if not conversa:
+        raise HTTPException(status_code=404, detail="Sessao nao encontrada")
+
+    return {
+        "estado": conversa.estado,
+        "qtd_moveis": len(conversa.moveis_orcados),
+        "total": sum(m.total_geral() for m in conversa.moveis_orcados) if conversa.moveis_orcados else 0,
+    }

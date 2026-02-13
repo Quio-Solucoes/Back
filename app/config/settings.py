@@ -4,6 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parents[2]
 EXCEL_FILE = BASE_DIR / "orcamento_final.xlsx"
 ORCAMENTOS_DIR = BASE_DIR / "orcamentos"
+DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./app.db")
 
 CORS_ORIGINS = [
     "http://localhost:3000",

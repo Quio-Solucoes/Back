@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
-from typing import Optional
 
-from app.domain.states import ESTADOS
+from app.features.ambientes.componentes.model import Componente
 
 
 @dataclass
@@ -17,19 +16,6 @@ class Movel:
     P_mm: float
     area: float
     descricao: str
-
-
-@dataclass
-class Componente:
-    nome: str
-    categoria_funcional: str
-    quantidade: int
-    preco_unitario: float
-    material: Optional[str] = None
-    cor: Optional[str] = None
-
-    def total(self) -> float:
-        return self.quantidade * self.preco_unitario
 
 
 @dataclass
@@ -62,10 +48,3 @@ class ConfiguracaoMovel:
     def total_geral(self) -> float:
         return self.preco_atual + self.total_componentes()
 
-
-@dataclass
-class Conversa:
-    estado: str = ESTADOS["INICIO"]
-    configuracao: Optional[ConfiguracaoMovel] = None
-    categoria_selecionada: Optional[str] = None
-    moveis_orcados: list[ConfiguracaoMovel] = field(default_factory=list)

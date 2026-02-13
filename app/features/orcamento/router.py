@@ -7,6 +7,7 @@ from app.features.orcamento.service import (
     editar_dimensao,
     obter_orcamento,
     remover_movel,
+    status_orcamento,
 )
 
 router = APIRouter(prefix="/orcamento", tags=["orcamento"])
@@ -46,3 +47,7 @@ def post_editar_dimensao(session_id: str, movel_id: int, payload: EditarDimensao
         altura=payload.altura,
         profundidade=payload.profundidade,
     )
+
+@router.get("/status/{session_id}")
+def get_status_orcamento(session_id: str) -> dict:
+    return status_orcamento(session_id)

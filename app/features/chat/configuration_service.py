@@ -1,5 +1,6 @@
-from app.domain.models import ConfiguracaoMovel
-from app.features.orcamento.repositories.catalog_repository import buscar_componentes_do_movel
+
+from app.features.ambientes.moveis.model import ConfiguracaoMovel
+from app.features.orcamento.catalog.repository import buscar_componentes_do_movel
 
 
 def criar_configuracao_padrao(movel):

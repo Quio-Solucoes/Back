@@ -1,20 +1,21 @@
-﻿from app.domain.models import Componente
-from app.domain.states import ESTADOS
+﻿
+from app.features.ambientes.componentes.model import Componente
+from app.features.chat.enum_states import ESTADOS
 from app.features.chat.configuration_service import criar_configuracao_padrao
 from app.features.chat.formatters import gerar_resumo_configuracao, resposta_com_opcoes
 from app.features.chat.helpers_tabbles import gerar_tabela_moveis_orcados, normalizar
 from app.features.conversations.store import get_or_create_conversa
-from app.features.orcamento.repositories.catalog_repository import buscar_catalogo_componentes, buscar_movel_por_nome
-from app.features.orcamento.services.pdf_service import salvar_pdf_local
+from app.features.orcamento.catalog.repository import buscar_catalogo_componentes, buscar_movel_por_nome
+from app.features.orcamento.pdf.service import salvar_pdf_local
 
 CATALOGO = buscar_catalogo_componentes()
 
 MENU = [
-    {"id": "1", "label": "📏 Dimensão"},
-    {"id": "2", "label": "🎨 Cor"},
-    {"id": "3", "label": "🪵 Material"},
-    {"id": "4", "label": "🔧 Componentes"},
-    {"id": "5", "label": "✅ Confirmar"},
+    {"id": "1", "label": "?? Dimensão"},
+    {"id": "2", "label": "?? Cor"},
+    {"id": "3", "label": "?? Material"},
+    {"id": "4", "label": "?? Componentes"},
+    {"id": "5", "label": "? Confirmar"},
 ]
 
 
@@ -159,7 +160,7 @@ def processar_mensagem(message: str, session_id: str) -> dict:
                     ),
                     "pdf_ready": True,
                     "pdf_filename": filename,
-                    "download_url": f"/download-pdf/{session_id}",
+                    "download_url": f"/orcamento/pdf/download/{session_id}",
                 }
             except Exception as exc:
                 return {"response": f"Erro ao gerar PDF: {exc}"}
@@ -259,3 +260,4 @@ def processar_mensagem(message: str, session_id: str) -> dict:
         return resposta_com_opcoes("Componente atualizado.\n\n" + gerar_resumo_configuracao(conversa.configuracao), MENU)
 
     return {"response": "Nao entendi. Tente novamente."}
+

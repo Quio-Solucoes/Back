@@ -2,6 +2,8 @@ from datetime import datetime
 import io
 from pathlib import Path
 
+from fastapi import HTTPException
+from fastapi.responses import StreamingResponse
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
@@ -10,6 +12,7 @@ from reportlab.lib.units import cm
 from reportlab.platypus import Paragraph, SimpleDocTemplate, Spacer, Table, TableStyle
 
 from app.config.settings import ORCAMENTOS_DIR
+from app.features.conversations.store import get_conversa
 
 
 def gerar_pdf_orcamento(moveis_configurados, session_id):
@@ -99,3 +102,18 @@ def salvar_pdf_local(moveis_configurados, session_id):
         f.write(buffer.getvalue())
 
     return filename
+
+
+def download_pdf_orcamento(session_id: str) -> StreamingResponse:
+    conversa = get_conversa(session_id)
+
+    if not conversa or not conversa.moveis_orcados:
+        raise HTTPException(status_code=404, detail="Orcamento nao encontrado")
+
+    try:
+        buffer = gerar_pdf_orcamento(conversa.moveis_orcados, session_id)
+        filename = f"orcamento_{session_id}.pdf"
+        headers = {"Content-Disposition": f'attachment; filename="{filename}"'}
+        return StreamingResponse(buffer, media_type="application/pdf", headers=headers)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
