@@ -24,7 +24,7 @@ class Subscription(Base):
     plan_id: Mapped[str | None] = mapped_column(String(100), nullable=True)
     status: Mapped[SubscriptionStatus] = mapped_column(
         Enum(SubscriptionStatus, name="subscription_status"),
-        default=SubscriptionStatus.ACTIVE,
+        default=SubscriptionStatus.PENDING_PAYMENT,
         nullable=False,
     )
     billing_cycle: Mapped[BillingCycle] = mapped_column(

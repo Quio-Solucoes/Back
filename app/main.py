@@ -4,9 +4,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.features.auth.router import router as auth_router
 from app.features.chat.router import router as chat_router
 from app.features.conversations.router import router as conversations_router
+from app.features.empresas.router import router as empresas_router
 from app.features.health.router import router as health_router
+from app.features.onboarding.router import router as onboarding_router
 from app.features.orcamento.pdf.router import router as orcamento_pdf_router
 from app.features.orcamento.router import router as orcamento_router
+from app.features.subscriptions.router import router as subscriptions_router
+from app.features.users.router import router as users_router
 from app.db.db import init_db
 from app.config.settings import CORS_ALLOW_ALL, CORS_ORIGINS
 
@@ -37,6 +41,10 @@ def create_app() -> FastAPI:
     application.include_router(conversations_router)
     application.include_router(health_router)
     application.include_router(auth_router)
+    application.include_router(onboarding_router)
+    application.include_router(users_router)
+    application.include_router(empresas_router)
+    application.include_router(subscriptions_router)
 
     return application
 
