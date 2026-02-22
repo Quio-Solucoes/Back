@@ -10,7 +10,7 @@ from app.config.settings import INTERNAL_API_KEY
 from app.db.db import get_db
 from app.features.auth.config import JWT_ALG, JWT_SECRET
 from app.features.users.enums import UserRole
-from app.features.users.models import User
+from app.features.users.schema import User
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")

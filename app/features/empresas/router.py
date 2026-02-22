@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.db.db import get_db
 from app.features.auth.dependencies import get_current_user, require_internal_api_key, require_roles
-from app.features.empresas.schemas import EmpresaResponse, EmpresaUpdateRequest
+from app.features.empresas.dtos import EmpresaResponse, EmpresaUpdateRequest
 from app.features.empresas.service import list_empresas, require_empresa_with_contacts, update_empresa
 from app.features.users.enums import UserRole
-from app.features.users.models import User
+from app.features.users.schema import User
 
 
 router = APIRouter(prefix="/empresas", tags=["empresas"])

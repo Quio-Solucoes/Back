@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.features.chat.voz.schemas import ChatVoiceRequest
+from app.features.chat.voz.dtos import ChatVoiceRequest
 from app.features.chat.voz.service import processar_mensagem_voz
 
 

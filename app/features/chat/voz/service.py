@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 
 from app.features.chat.service import processar_mensagem
-from app.features.chat.voz.schemas import ChatVoiceRequest
+from app.features.chat.voz.dtos import ChatVoiceRequest
 
 
 def processar_mensagem_voz(payload: ChatVoiceRequest) -> dict:

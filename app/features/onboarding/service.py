@@ -4,14 +4,14 @@ from sqlalchemy.orm import Session
 
 from app.features.auth.security import hash_password
 from app.features.empresas.enums import EmpresaStatus
-from app.features.empresas.models import Empresa, EmpresaAddress, EmpresaPhone
+from app.features.empresas.schema import Empresa, EmpresaAddress, EmpresaPhone
 from app.features.invites.enums import FranchiseInviteStatus
-from app.features.invites.models import FranchiseInvite
+from app.features.invites.schema import FranchiseInvite
 from app.features.invites.service import assert_invite_available, find_franchise_invite_by_token
 from app.features.subscriptions.enums import BillingCycle, SubscriptionStatus
-from app.features.subscriptions.models import Subscription
+from app.features.subscriptions.schema import Subscription
 from app.features.users.enums import UserRole, UserStatus
-from app.features.users.models import User
+from app.features.users.schema import User
 
 
 def create_pending_company_and_owner(db: Session, payload) -> tuple[Empresa, User, Subscription]:

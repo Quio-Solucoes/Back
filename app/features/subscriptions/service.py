@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.features.subscriptions.models import Subscription
+from app.features.subscriptions.schema import Subscription
 
 
 def get_empresa_subscription(db: Session, empresa_id: str) -> Subscription | None:

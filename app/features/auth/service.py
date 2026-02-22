@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.features.auth.schemas import LoginRequest, TokenResponse
+from app.features.auth.dtos import LoginRequest, TokenResponse
 from app.features.auth.security import create_access_token, verify_password
 from app.features.empresas.enums import EmpresaStatus
 from app.features.users.enums import UserStatus

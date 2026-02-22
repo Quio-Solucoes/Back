@@ -5,7 +5,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
 from app.features.invites.enums import FranchiseInviteStatus, UserInviteStatus
-from app.features.invites.models import (
+from app.features.invites.schema import (
     FranchiseInvite,
     UserInvite,
     generate_plain_token,

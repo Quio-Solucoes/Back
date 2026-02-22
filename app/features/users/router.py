@@ -13,7 +13,7 @@ from app.features.invites.service import (
 from app.features.subscriptions.plans import get_plan_limit
 from app.features.subscriptions.service import require_empresa_subscription
 from app.features.users.enums import UserRole, UserStatus
-from app.features.users.schemas import (
+from app.features.users.dtos import (
     AcceptUserInviteRequest,
     CreateUserInviteRequest,
     UpdateUserStatusRequest,
@@ -28,7 +28,7 @@ from app.features.users.service import (
     list_empresa_users,
     update_user_status,
 )
-from app.features.users.models import User
+from app.features.users.schema import User
 
 
 router = APIRouter(prefix="/users", tags=["users"])

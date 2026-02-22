@@ -3,10 +3,10 @@ from sqlalchemy.orm import Session
 
 from app.db.db import get_db
 from app.features.auth.dependencies import require_roles
-from app.features.subscriptions.schemas import SubscriptionResponse, UpdatePlanRequest
+from app.features.subscriptions.dtos import SubscriptionResponse, UpdatePlanRequest
 from app.features.subscriptions.service import require_empresa_subscription, update_plan
 from app.features.users.enums import UserRole
-from app.features.users.models import User
+from app.features.users.schema import User
 
 
 router = APIRouter(prefix="/subscriptions", tags=["subscriptions"])

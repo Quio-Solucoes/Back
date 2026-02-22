@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.features.orcamento.schemas import AtualizarComponenteRequest, EditarDimensaoRequest
+from app.features.orcamento.dtos import AtualizarComponenteRequest, EditarDimensaoRequest
 from app.features.orcamento.service import (
     atualizar_componente,
     editar_componente,

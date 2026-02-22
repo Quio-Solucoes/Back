@@ -2,7 +2,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
-from app.features.empresas.models import Empresa, EmpresaAddress, EmpresaPhone
+from app.features.empresas.schema import Empresa, EmpresaAddress, EmpresaPhone
 
 
 def get_empresa_with_contacts(db: Session, empresa_id: str) -> Empresa | None:

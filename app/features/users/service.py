@@ -4,7 +4,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session, selectinload
 
 from app.features.users.enums import UserRole, UserStatus
-from app.features.users.models import User
+from app.features.users.schema import User
 
 
 def find_user_by_email(db: Session, normalized_email: str) -> User | None:

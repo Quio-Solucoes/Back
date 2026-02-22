@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 from app.db.db import get_db
 from app.features.auth.dependencies import require_internal_api_key
 from app.features.invites.service import create_franchise_invite, list_franchise_invites
-from app.features.onboarding.schemas import (
+from app.features.onboarding.dtos import (
     CreateFranchiseInviteRequest,
     FranchiseInviteResponse,
     InternalEmpresaActionResponse,

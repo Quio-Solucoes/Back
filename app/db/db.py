@@ -25,9 +25,9 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def init_db() -> None:
-    import app.features.empresas.models  # noqa: F401
-    import app.features.invites.models  # noqa: F401
-    import app.features.subscriptions.models  # noqa: F401
-    import app.features.users.models  # noqa: F401
+    import app.features.empresas.schema  # noqa: F401
+    import app.features.invites.schema  # noqa: F401
+    import app.features.subscriptions.schema  # noqa: F401
+    import app.features.users.schema  # noqa: F401
 
     Base.metadata.create_all(bind=engine)

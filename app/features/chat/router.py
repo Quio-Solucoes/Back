@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 
-from app.features.chat.schemas import ChatRequest
+from app.features.chat.dtos import ChatRequest
 from app.features.chat.service import processar_mensagem
 
 router = APIRouter(tags=["chat"])
