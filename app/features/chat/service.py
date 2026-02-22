@@ -1,4 +1,6 @@
 ﻿
+from sqlalchemy.orm import Session
+
 from app.features.ambientes.componentes.model import Componente
 from app.features.chat.enum_states import ESTADOS
 from app.features.chat.configuration_service import criar_configuracao_padrao
@@ -7,6 +9,7 @@ from app.features.chat.helpers_tabbles import gerar_tabela_moveis_orcados, norma
 from app.features.conversations.store import get_or_create_conversa
 from app.features.orcamento.catalogo.catalogo_repository import buscar_catalogo_componentes, buscar_movel_por_nome
 from app.features.orcamento.pdf.pdf_service import salvar_pdf_local
+from app.features.orcamento.repository import save_finalized_orcamento
 
 CATALOGO = buscar_catalogo_componentes()
 
@@ -19,7 +22,7 @@ MENU = [
 ]
 
 
-def processar_mensagem(message: str, session_id: str) -> dict:
+def processar_mensagem(message: str, session_id: str, db: Session | None = None) -> dict:
     conversa = get_or_create_conversa(session_id)
 
     if conversa.estado == ESTADOS["INICIO"]:
@@ -148,6 +151,13 @@ def processar_mensagem(message: str, session_id: str) -> dict:
         if message.lower() in {"confirmar", "finalizar"}:
             try:
                 filename = salvar_pdf_local(conversa.moveis_orcados, session_id)
+                if db is not None:
+                    save_finalized_orcamento(
+                        db,
+                        session_id=session_id,
+                        moveis_configurados=conversa.moveis_orcados,
+                        pdf_filename=filename,
+                    )
                 conversa.estado = ESTADOS["FINALIZADO"]
                 total_final = sum(m.total_geral() for m in conversa.moveis_orcados)
                 qtd_moveis = len(conversa.moveis_orcados)

@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field, field_validator
 
+from app.features.common.dtos import AddressInputDto, PhoneInputDto
 
 class CreateFranchiseInviteRequest(BaseModel):
     email: str = Field(min_length=3, max_length=255)
@@ -19,20 +20,12 @@ class FranchiseInviteResponse(BaseModel):
     registration_token: str | None = None
 
 
-class CompanyAddressInput(BaseModel):
-    street: str = Field(min_length=2, max_length=255)
-    number: str | None = Field(default=None, max_length=20)
-    complement: str | None = Field(default=None, max_length=100)
-    district: str | None = Field(default=None, max_length=100)
-    city: str = Field(min_length=2, max_length=100)
-    state: str = Field(min_length=2, max_length=2)
-    zip_code: str = Field(min_length=8, max_length=12)
+class CompanyAddressInput(AddressInputDto):
+    pass
 
 
-class CompanyPhoneInput(BaseModel):
-    label: str | None = Field(default=None, max_length=30)
-    phone_number: str = Field(min_length=8, max_length=20)
-    is_whatsapp: bool = False
+class CompanyPhoneInput(PhoneInputDto):
+    pass
 
 
 class RegisterFranchiseRequest(BaseModel):

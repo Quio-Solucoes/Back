@@ -1,10 +1,11 @@
 from fastapi import HTTPException, status
+from sqlalchemy.orm import Session
 
 from app.features.chat.service import processar_mensagem
 from app.features.chat.voz.dtos import ChatVoiceRequest
 
 
-def processar_mensagem_voz(payload: ChatVoiceRequest) -> dict:
+def processar_mensagem_voz(payload: ChatVoiceRequest, db: Session | None = None) -> dict:
     message = str(payload.message or "").strip()
     session_id = payload.session_id or "default"
 
@@ -14,4 +15,4 @@ def processar_mensagem_voz(payload: ChatVoiceRequest) -> dict:
             detail="Audio invalido",
         )
 
-    return processar_mensagem(message=message, session_id=session_id)
+    return processar_mensagem(message=message, session_id=session_id, db=db)

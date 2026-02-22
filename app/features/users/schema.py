@@ -39,6 +39,9 @@ class User(Base):
     )
 
     empresa = relationship("Empresa", back_populates="users")
+    address_links = relationship("UserAddressLink", back_populates="user", cascade="all, delete-orphan")
+    addresses = relationship("Address", secondary="user_addresses", back_populates="users", viewonly=True)
+    phones = relationship("Phone", back_populates="user", cascade="all, delete-orphan")
 
     @validates("email")
     def normalize_email(self, key: str, email: str) -> str:

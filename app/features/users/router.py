@@ -4,6 +4,18 @@ from sqlalchemy.orm import Session
 from app.db.db import get_db
 from app.features.auth.dependencies import get_current_user, require_roles
 from app.features.auth.security import hash_password
+from app.features.contacts.dtos import (
+    UserAddressCreateRequest,
+    UserAddressLinkResponse,
+    UserPhoneCreateRequest,
+    UserPhoneResponse,
+)
+from app.features.contacts.service import (
+    add_new_address_to_user,
+    add_user_phone,
+    list_user_addresses,
+    list_user_phones,
+)
 from app.features.invites.enums import UserInviteStatus
 from app.features.invites.service import (
     assert_user_invite_available,
@@ -37,6 +49,62 @@ router = APIRouter(prefix="/users", tags=["users"])
 @router.get("/me", response_model=UserResponse)
 def me(current_user: User = Depends(get_current_user)) -> UserResponse:
     return UserResponse.from_model(current_user)
+
+
+@router.get("/me/addresses", response_model=list[UserAddressLinkResponse])
+def me_addresses(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> list[UserAddressLinkResponse]:
+    links = list_user_addresses(db, user_id=current_user.id)
+    return [UserAddressLinkResponse.from_model(link) for link in links]
+
+
+@router.post("/me/addresses", response_model=UserAddressLinkResponse, status_code=status.HTTP_201_CREATED)
+def add_me_address(
+    payload: UserAddressCreateRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> UserAddressLinkResponse:
+    link = add_new_address_to_user(
+        db,
+        user_id=current_user.id,
+        address_payload=payload.address,
+        is_primary=payload.is_primary,
+        label=payload.label,
+    )
+    db.commit()
+    links = list_user_addresses(db, user_id=current_user.id)
+    created = next((item for item in links if item.id == link.id), None)
+    if created is None:
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Falha ao carregar endereco criado")
+    return UserAddressLinkResponse.from_model(created)
+
+
+@router.post("/me/phones", response_model=UserPhoneResponse, status_code=status.HTTP_201_CREATED)
+def add_me_phone(
+    payload: UserPhoneCreateRequest,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> UserPhoneResponse:
+    phone = add_user_phone(
+        db,
+        user_id=current_user.id,
+        phone_payload=payload.phone,
+        is_primary=payload.is_primary,
+    )
+    db.commit()
+    db.refresh(phone)
+    return UserPhoneResponse.from_model(phone)
+
+
+@router.get("/me/phones", response_model=list[UserPhoneResponse])
+def me_phones(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+) -> list[UserPhoneResponse]:
+    phones = list_user_phones(db, user_id=current_user.id)
+    return [UserPhoneResponse.from_model(phone) for phone in phones]
 
 
 @router.get("", response_model=list[UserResponse])

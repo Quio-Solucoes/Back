@@ -1,9 +1,9 @@
 from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
-from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 
+from app.features.invites import repository
 from app.features.invites.enums import FranchiseInviteStatus, UserInviteStatus
 from app.features.invites.schema import (
     FranchiseInvite,
@@ -33,13 +33,11 @@ def create_franchise_invite(db: Session, email: str, expires_in_days: int) -> tu
 
 def find_franchise_invite_by_token(db: Session, token: str) -> FranchiseInvite | None:
     token_hash = hash_token(token)
-    stmt = select(FranchiseInvite).where(FranchiseInvite.token_hash == token_hash)
-    return db.scalars(stmt).first()
+    return repository.get_franchise_invite_by_token_hash(db, token_hash)
 
 
 def list_franchise_invites(db: Session) -> list[FranchiseInvite]:
-    stmt = select(FranchiseInvite).order_by(FranchiseInvite.created_at.desc())
-    return list(db.scalars(stmt).all())
+    return repository.list_franchise_invites(db)
 
 
 def assert_invite_available(invite: FranchiseInvite) -> None:
@@ -65,13 +63,11 @@ def create_user_invite(
 ) -> tuple[UserInvite, str]:
     normalized_email = email.strip().lower()
 
-    existing_pending_stmt = (
-        select(UserInvite)
-        .where(UserInvite.empresa_id == empresa_id)
-        .where(func.lower(UserInvite.email) == normalized_email)
-        .where(UserInvite.status == UserInviteStatus.PENDING)
+    existing_pending = repository.get_pending_user_invite_by_email(
+        db,
+        empresa_id=empresa_id,
+        normalized_email=normalized_email,
     )
-    existing_pending = db.scalars(existing_pending_stmt).first()
     if existing_pending:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -94,8 +90,7 @@ def create_user_invite(
 
 
 def find_user_invite_by_token(db: Session, token: str) -> UserInvite | None:
-    stmt = select(UserInvite).where(UserInvite.token_hash == hash_token(token))
-    return db.scalars(stmt).first()
+    return repository.get_user_invite_by_token_hash(db, hash_token(token))
 
 
 def assert_user_invite_available(invite: UserInvite) -> None:

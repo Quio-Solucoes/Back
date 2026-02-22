@@ -25,8 +25,10 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def init_db() -> None:
+    import app.features.contacts.schema  # noqa: F401
     import app.features.empresas.schema  # noqa: F401
     import app.features.invites.schema  # noqa: F401
+    import app.features.orcamento.schema  # noqa: F401
     import app.features.subscriptions.schema  # noqa: F401
     import app.features.users.schema  # noqa: F401
 

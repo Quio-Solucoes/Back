@@ -1,5 +1,7 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.orm import Session
 
+from app.db.db import get_db
 from app.features.chat.dtos import ChatRequest
 from app.features.chat.service import processar_mensagem
 
@@ -12,11 +14,11 @@ def chat_options() -> dict:
 
 
 @router.post("/chat")
-def chat(payload: ChatRequest) -> dict:
+def chat(payload: ChatRequest, db: Session = Depends(get_db)) -> dict:
     try:
         message = str(payload.message or "").strip()
         session_id = payload.session_id or "default"
     except Exception as exc:
         raise HTTPException(status_code=400, detail=f"Erro ao processar requisicao: {exc}") from exc
 
-    return processar_mensagem(message=message, session_id=session_id)
+    return processar_mensagem(message=message, session_id=session_id, db=db)

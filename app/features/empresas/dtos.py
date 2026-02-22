@@ -1,20 +1,13 @@
 from pydantic import BaseModel, Field
 
+from app.features.common.dtos import AddressInputDto, AddressResponseDto, PhoneInputDto, PhoneResponseDto
 
-class EmpresaAddressPayload(BaseModel):
-    street: str = Field(min_length=2, max_length=255)
-    number: str | None = Field(default=None, max_length=20)
-    complement: str | None = Field(default=None, max_length=100)
-    district: str | None = Field(default=None, max_length=100)
-    city: str = Field(min_length=2, max_length=100)
-    state: str = Field(min_length=2, max_length=2)
-    zip_code: str = Field(min_length=8, max_length=12)
+class EmpresaAddressPayload(AddressInputDto):
+    pass
 
 
-class EmpresaPhonePayload(BaseModel):
-    label: str | None = Field(default=None, max_length=30)
-    phone_number: str = Field(min_length=8, max_length=20)
-    is_whatsapp: bool = False
+class EmpresaPhonePayload(PhoneInputDto):
+    pass
 
 
 class EmpresaUpdateRequest(BaseModel):
@@ -25,22 +18,12 @@ class EmpresaUpdateRequest(BaseModel):
     phone: EmpresaPhonePayload | None = None
 
 
-class EmpresaAddressResponse(BaseModel):
-    id: str
-    street: str
-    number: str | None
-    complement: str | None
-    district: str | None
-    city: str
-    state: str
-    zip_code: str
+class EmpresaAddressResponse(AddressResponseDto):
+    pass
 
 
-class EmpresaPhoneResponse(BaseModel):
-    id: str
-    label: str | None
-    phone_number: str
-    is_whatsapp: bool
+class EmpresaPhoneResponse(PhoneResponseDto):
+    pass
 
 
 class EmpresaResponse(BaseModel):
