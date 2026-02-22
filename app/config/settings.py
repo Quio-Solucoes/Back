@@ -4,6 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parents[2]
 EXCEL_FILE = BASE_DIR / "orcamento_final.xlsx"
 ORCAMENTOS_DIR = BASE_DIR / "orcamentos"
+APP_ENV = os.getenv("APP_ENV", os.getenv("ENV", "development")).lower()
 
 CORS_ORIGINS = [
     "http://localhost:3000",
@@ -12,8 +13,9 @@ CORS_ORIGINS = [
     "https://quio.com.br",
 ]
 
-# Development default: libera qualquer origem.
-# Defina CORS_ALLOW_ALL=false para voltar ao modo restrito por lista.
-CORS_ALLOW_ALL = os.getenv("CORS_ALLOW_ALL", "true").lower() == "true"
+# Em producao, default fechado (usa apenas CORS_ORIGINS).
+# Em desenvolvimento, default aberto para facilitar testes locais.
+_default_cors_allow_all = "false" if APP_ENV in {"prod", "production"} else "true"
+CORS_ALLOW_ALL = os.getenv("CORS_ALLOW_ALL", _default_cors_allow_all).lower() == "true"
 
 
