@@ -2,7 +2,7 @@ from fastapi import HTTPException
 from fastapi.responses import StreamingResponse
 
 from app.features.conversations.store import get_conversa
-from app.features.orcamento.services.pdf_service import gerar_pdf_orcamento
+from app.features.orcamento.pdf.pdf_service import gerar_pdf_orcamento
 
 
 def download_pdf(session_id: str) -> StreamingResponse:

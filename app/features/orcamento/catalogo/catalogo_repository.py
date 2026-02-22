@@ -32,9 +32,11 @@ def _load_sheet(sheet_name: str) -> pd.DataFrame:
 
 def buscar_movel_por_nome(nome: str):
     df = _load_sheet("balcoes")
+    termo_busca = normalizar(nome)
 
     for _, r in df.iterrows():
-        if nome.lower() in str(r["nome"]).lower():
+        nome_catalogo = normalizar(str(r["nome"]))
+        if termo_busca in nome_catalogo:
             return Movel(
                 r["id"],
                 r["nome"],
