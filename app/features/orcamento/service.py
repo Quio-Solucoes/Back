@@ -4,7 +4,7 @@ from app.features.ambientes.componentes.model import Componente
 from app.features.chat.enum_states import ESTADOS
 from app.features.chat.helpers_tabbles import normalizar
 from app.features.conversations.store import get_conversa
-from app.features.orcamento.catalog.repository import buscar_catalogo_componentes
+from app.features.orcamento.catalogo.catalogo_repository import buscar_catalogo_componentes
 
 
 CATALOGO = buscar_catalogo_componentes()

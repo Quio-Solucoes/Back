@@ -5,8 +5,8 @@ from app.features.chat.configuration_service import criar_configuracao_padrao
 from app.features.chat.formatters import gerar_resumo_configuracao, resposta_com_opcoes
 from app.features.chat.helpers_tabbles import gerar_tabela_moveis_orcados, normalizar
 from app.features.conversations.store import get_or_create_conversa
-from app.features.orcamento.catalog.repository import buscar_catalogo_componentes, buscar_movel_por_nome
-from app.features.orcamento.pdf.service import salvar_pdf_local
+from app.features.orcamento.catalogo.catalogo_repository import buscar_catalogo_componentes, buscar_movel_por_nome
+from app.features.orcamento.pdf.pdf_service import salvar_pdf_local
 
 CATALOGO = buscar_catalogo_componentes()
 
