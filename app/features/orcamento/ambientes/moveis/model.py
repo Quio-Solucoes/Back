@@ -1,7 +1,6 @@
 from dataclasses import dataclass, field
 
-from app.features.ambientes.componentes.model import Componente
-
+from app.features.orcamento.ambientes.componentes.model import Componente
 
 @dataclass
 class Movel:

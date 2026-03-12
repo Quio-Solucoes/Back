@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.features.auth.dependencies import get_current_user
-from app.features.memberships.enums import MembershipRole
+from app.features.empresas.memberships.enums import MembershipRole
 from app.features.users.schema import User
 from app.features.orcamento.dtos import AtualizarComponenteRequest, EditarDimensaoRequest
 from app.features.orcamento.service import (

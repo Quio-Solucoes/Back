@@ -3,14 +3,14 @@ from sqlalchemy.orm import Session
 
 from app.db.db import get_db
 from app.features.auth.dependencies import require_internal_api_key
-from app.features.invites.service import create_franchise_invite, list_franchise_invites
-from app.features.onboarding.dtos import (
+from app.features.empresas.invites.service import create_franchise_invite, list_franchise_invites
+from app.features.empresas.onboarding.dtos import (
     CreateFranchiseInviteRequest,
     FranchiseInviteResponse,
     InternalEmpresaActionResponse,
     RegisterFranchiseRequest,
 )
-from app.features.onboarding.service import (
+from app.features.empresas.onboarding.service import (
     activate_owner_after_payment,
     approve_empresa,
     create_pending_company_and_owner,

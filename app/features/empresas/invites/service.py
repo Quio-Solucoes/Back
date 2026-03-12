@@ -40,6 +40,10 @@ def list_franchise_invites(db: Session) -> list[FranchiseInvite]:
     return repository.list_franchise_invites(db)
 
 
+def find_franchise_invite_by_registered_empresa_id(db: Session, empresa_id: str) -> FranchiseInvite | None:
+    return repository.get_franchise_invite_by_registered_empresa_id(db, empresa_id)
+
+
 def assert_invite_available(invite: FranchiseInvite) -> None:
     if invite.status not in {FranchiseInviteStatus.PENDING}:
         raise HTTPException(

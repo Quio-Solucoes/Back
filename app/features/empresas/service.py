@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.features.contacts.service import set_empresa_contacts
+from app.features.common.service import set_empresa_contacts
 from app.features.empresas import repository
 from app.features.empresas.schema import Empresa
 
@@ -12,6 +12,10 @@ def get_empresa_with_contacts(db: Session, empresa_id: str) -> Empresa | None:
 
 def list_empresas(db: Session) -> list[Empresa]:
     return repository.list_empresas_with_contacts(db)
+
+
+def find_empresa_by_id(db: Session, empresa_id: str) -> Empresa | None:
+    return repository.get_empresa_by_id(db, empresa_id)
 
 
 def require_empresa_with_contacts(db: Session, empresa_id: str) -> Empresa:

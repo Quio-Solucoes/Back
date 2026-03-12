@@ -1,16 +1,16 @@
 from fastapi import HTTPException
 
-
 from app.features.chat.enum_states import ESTADOS
 from app.features.chat.helpers_tabbles import normalizar
-from app.features.conversations.store import get_conversa
+from app.features.chat.conversations.service import get_conversa
 from app.features.empresas.memberships.enums import MembershipRole
+from app.features.orcamento import repository as orcamento_repository
 from app.features.orcamento.ambientes.componentes.model import Componente
-from app.features.orcamento.catalogo.catalogo_repository import buscar_catalogo_componentes
+from app.features.orcamento.catalogo.service import listar_catalogo_componentes
 from app.features.orcamento.pricing import calcular_total_movel, requires_owner_admin_for_descontos
 
 
-CATALOGO = buscar_catalogo_componentes()
+CATALOGO = listar_catalogo_componentes()
 
 
 def obter_orcamento(
@@ -167,3 +167,29 @@ def status_orcamento(session_id: str) -> dict:
         "qtd_moveis": len(conversa.moveis_orcados),
         "total": sum(m.total_geral() for m in conversa.moveis_orcados) if conversa.moveis_orcados else 0,
     }
+
+
+def save_finalized_orcamento(
+    db,
+    *,
+    session_id: str,
+    moveis_configurados: list,
+    pdf_filename: str | None = None,
+    status: str = "FINALIZADO",
+    desconto_cliente_pct: float = 0.0,
+    taxa_arquiteto_pct: float = 0.0,
+    lucro_liquido_pct: float = 0.0,
+    consultor_pct: float | None = None,
+):
+    """Persist o orçamento finalizado delegando ao repositório."""
+    return orcamento_repository.save_finalized_orcamento(
+        db,
+        session_id=session_id,
+        moveis_configurados=moveis_configurados,
+        pdf_filename=pdf_filename,
+        status=status,
+        desconto_cliente_pct=desconto_cliente_pct,
+        taxa_arquiteto_pct=taxa_arquiteto_pct,
+        lucro_liquido_pct=lucro_liquido_pct,
+        consultor_pct=consultor_pct,
+    )

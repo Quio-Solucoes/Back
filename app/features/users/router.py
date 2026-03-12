@@ -1,28 +1,27 @@
 from fastapi import APIRouter, Depends, HTTPException, status
+from app.features.common.address.dtos import UserAddressCreateRequest, UserAddressLinkResponse
+from app.features.common.phones.dtos import UserPhoneCreateRequest, UserPhoneResponse
 from sqlalchemy.orm import Session
 
 from app.db.db import get_db
 from app.features.auth.dependencies import get_current_user, require_roles
-from app.features.contacts.dtos import (
-    UserAddressCreateRequest,
-    UserAddressLinkResponse,
-    UserPhoneCreateRequest,
-    UserPhoneResponse,
+
+from app.features.common.address.service import add_new_address_to_user, list_user_addresses
+from app.features.common.phones.service import add_user_phone, list_user_phones
+from app.features.auth.identity.service import (
+    create_auth_account,
+    find_auth_account_by_login_identifier,
 )
-from app.features.contacts.address_service import add_new_address_to_user, list_user_addresses
-from app.features.contacts.phone_service import add_user_phone, list_user_phones
-from app.features.identity.repository import get_by_login_identifier
-from app.features.identity.service import create_auth_account
-from app.features.invites.enums import UserInviteStatus
-from app.features.invites.service import (
+from app.features.empresas.invites.enums import UserInviteStatus
+from app.features.empresas.invites.service import (
     assert_user_invite_available,
     create_user_invite,
     find_user_invite_by_token,
 )
-from app.features.memberships.enums import MembershipRole, MembershipStatus
-from app.features.memberships.service import create_membership
-from app.features.subscriptions.plans import get_plan_limit
-from app.features.subscriptions.service import require_empresa_subscription
+from app.features.empresas.memberships.enums import MembershipRole, MembershipStatus
+from app.features.empresas.memberships.service import create_membership
+from app.features.empresas.subscriptions.plans import get_plan_limit
+from app.features.empresas.subscriptions.service import require_empresa_subscription
 from app.features.users.dtos import (
     AcceptUserInviteRequest,
     CreateUserInviteRequest,
@@ -158,7 +157,7 @@ def pre_register_user(
             )
 
     normalized_email = payload.email.strip().lower()
-    existing_account = get_by_login_identifier(db, normalized_email)
+    existing_account = find_auth_account_by_login_identifier(db, normalized_email)
     if existing_account and any(m.empresa_id == current_user.empresa_id for m in existing_account.user.memberships):
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,
@@ -194,7 +193,7 @@ def accept_invite(payload: AcceptUserInviteRequest, db: Session = Depends(get_db
 
     normalized_email = invite.email.strip().lower()
     existing_user = find_user_by_email(db, normalized_email)
-    existing_account = get_by_login_identifier(db, normalized_email)
+    existing_account = find_auth_account_by_login_identifier(db, normalized_email)
     if existing_user or existing_account:
         raise HTTPException(
             status_code=status.HTTP_409_CONFLICT,

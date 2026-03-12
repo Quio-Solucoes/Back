@@ -5,7 +5,7 @@ from sqlalchemy import DateTime, Enum, ForeignKey, Numeric, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db.db import Base
-from app.features.subscriptions.enums import BillingCycle, SubscriptionStatus
+from app.features.empresas.subscriptions.enums import BillingCycle, SubscriptionStatus
 
 
 def utcnow() -> datetime:

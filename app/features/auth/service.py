@@ -13,10 +13,9 @@ from app.features.auth.password_service import needs_rehash, rehash_password, ve
 from app.features.auth.security import create_access_token
 from app.features.empresas.enums import EmpresaStatus
 from app.features.auth.identity.enums import AuthAccountStatus
-from app.features.auth.identity.repository import (
-    get_by_login_identifier,
-    mark_successful_login,
-    save_failed_attempt,
+from app.features.auth.identity.service import (
+    find_auth_account_by_login_identifier,
+    register_failed_login_attempt,
 )
 from app.features.auth.identity.schema import AuthAccount
 from app.features.empresas.memberships.enums import MembershipStatus
@@ -27,7 +26,7 @@ LOCK_WINDOW_MINUTES = 15
 
 
 def login(db: Session, payload: LoginRequest) -> LoginResponse:
-    account = get_by_login_identifier(db=db, login_identifier=payload.login_identifier)
+    account = find_auth_account_by_login_identifier(db=db, login_identifier=payload.login_identifier)
 
     invalid_credentials = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
@@ -106,7 +105,7 @@ def _assert_account_active(account: AuthAccount, now: datetime) -> None:
 
 
 def _register_failure(db: Session, account: AuthAccount, now: datetime) -> None:
-    save_failed_attempt(db, account)
+    register_failed_login_attempt(db, account)
     if account.failed_login_attempts >= MAX_FAILED_ATTEMPTS:
         account.locked_until = now + timedelta(minutes=LOCK_WINDOW_MINUTES)
         account.status = AuthAccountStatus.LOCKED

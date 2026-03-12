@@ -3,8 +3,8 @@ from pathlib import Path
 import pandas as pd
 
 from app.config.settings import EXCEL_FILE
-from app.features.ambientes.componentes.model import Componente
-from app.features.ambientes.moveis.model import Movel
+from app.features.orcamento.ambientes.componentes.model import Componente
+from app.features.orcamento.ambientes.moveis.model import Movel
 from app.features.chat.helpers_tabbles import normalizar
 
 

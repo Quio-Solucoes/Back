@@ -1,19 +1,28 @@
 from fastapi import HTTPException, status
 from sqlalchemy.orm import Session
 
-from app.features.contacts.service import set_empresa_contacts
+from app.features.auth.identity.service import (
+    create_auth_account,
+    find_auth_account_by_login_identifier,
+)
+from app.features.common.service import set_empresa_contacts
 from app.features.empresas.enums import EmpresaStatus
+from app.features.empresas.invites.enums import FranchiseInviteStatus
+from app.features.empresas.invites.service import (
+    assert_invite_available,
+    find_franchise_invite_by_registered_empresa_id,
+    find_franchise_invite_by_token,
+)
+from app.features.empresas.memberships.enums import MembershipRole, MembershipStatus
+from app.features.empresas.memberships.service import create_membership
 from app.features.empresas.schema import Empresa
-from app.features.identity.service import create_auth_account
-from app.features.invites.enums import FranchiseInviteStatus
-from app.features.invites.service import assert_invite_available, find_franchise_invite_by_token
-from app.features.memberships.enums import MembershipRole, MembershipStatus
-from app.features.memberships.service import create_membership
-from app.features.onboarding import repository
-from app.features.subscriptions.enums import BillingCycle, SubscriptionStatus
-from app.features.subscriptions.schema import Subscription
+from app.features.empresas.service import find_empresa_by_id
+from app.features.empresas.subscriptions.enums import BillingCycle, SubscriptionStatus
+from app.features.empresas.subscriptions.schema import Subscription
+from app.features.empresas.subscriptions.service import get_empresa_subscription
 from app.features.users.enums import UserStatus
 from app.features.users.schema import User
+from app.features.users.service import find_user_by_empresa_and_role
 
 
 def create_pending_company_and_owner(db: Session, payload) -> tuple[Empresa, User, Subscription]:
@@ -29,7 +38,8 @@ def create_pending_company_and_owner(db: Session, payload) -> tuple[Empresa, Use
             detail="Email do owner deve ser o mesmo do convite",
         )
 
-    if repository.owner_email_exists(db, payload.owner_email.strip().lower()):
+    normalized_email = payload.owner_email.strip().lower()
+    if find_auth_account_by_login_identifier(db, normalized_email):
         raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Email do owner ja cadastrado")
 
     empresa = Empresa(
@@ -93,15 +103,15 @@ def create_pending_company_and_owner(db: Session, payload) -> tuple[Empresa, Use
 
 
 def get_owner(db: Session, empresa_id: str) -> User | None:
-    return repository.get_owner_by_empresa_id(db, empresa_id)
+    return find_user_by_empresa_and_role(db, empresa_id, MembershipRole.OWNER)
 
 
 def get_latest_subscription(db: Session, empresa_id: str) -> Subscription | None:
-    return repository.get_latest_subscription(db, empresa_id)
+    return get_empresa_subscription(db, empresa_id)
 
 
 def ensure_empresa(db: Session, empresa_id: str) -> Empresa:
-    empresa = repository.get_empresa(db, empresa_id)
+    empresa = find_empresa_by_id(db, empresa_id)
     if not empresa:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Empresa nao encontrada")
     return empresa
@@ -116,7 +126,7 @@ def approve_empresa(db: Session, empresa_id: str) -> tuple[Empresa, User | None,
     owner = get_owner(db, empresa.id)
     subscription = get_latest_subscription(db, empresa.id)
 
-    franchise_invite = repository.get_franchise_invite_by_empresa_id(db, empresa.id)
+    franchise_invite = find_franchise_invite_by_registered_empresa_id(db, empresa.id)
     if franchise_invite:
         franchise_invite.status = FranchiseInviteStatus.APPROVED
         db.add(franchise_invite)
@@ -141,7 +151,7 @@ def reject_empresa(db: Session, empresa_id: str) -> tuple[Empresa, User | None, 
         subscription.status = SubscriptionStatus.CANCELED
         db.add(subscription)
 
-    franchise_invite = repository.get_franchise_invite_by_empresa_id(db, empresa.id)
+    franchise_invite = find_franchise_invite_by_registered_empresa_id(db, empresa.id)
     if franchise_invite:
         franchise_invite.status = FranchiseInviteStatus.REJECTED
         db.add(franchise_invite)

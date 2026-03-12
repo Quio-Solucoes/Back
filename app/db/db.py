@@ -25,14 +25,15 @@ def get_db() -> Generator[Session, None, None]:
 
 
 def init_db() -> None:
-    import app.features.contacts.schema  # noqa: F401
+    import app.features.common.address.schema  # noqa: F401
+    import app.features.common.phones.schema
     import app.features.crm.schema  # noqa: F401
     import app.features.empresas.schema  # noqa: F401
-    import app.features.identity.schema  # noqa: F401
-    import app.features.invites.schema  # noqa: F401
-    import app.features.memberships.schema  # noqa: F401
+    import app.features.auth.identity.schema  # noqa: F401
+    import app.features.empresas.invites.schema  # noqa: F401
+    import app.features.empresas.memberships.schema  # noqa: F401
     import app.features.orcamento.schema  # noqa: F401
-    import app.features.subscriptions.schema  # noqa: F401
+    import app.features.empresas.subscriptions.schema  # noqa: F401
     import app.features.users.schema  # noqa: F401
 
     Base.metadata.create_all(bind=engine)

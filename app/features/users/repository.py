@@ -1,8 +1,8 @@
 from sqlalchemy import func, select
 from sqlalchemy.orm import Session, joinedload, selectinload
 
-from app.features.memberships.enums import MembershipRole, MembershipStatus
-from app.features.memberships.schema import Membership
+from app.features.empresas.memberships.enums import MembershipRole, MembershipStatus
+from app.features.empresas.memberships.schema import Membership
 from app.features.users.enums import UserStatus
 from app.features.users.schema import User
 

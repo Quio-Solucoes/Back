@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.features.users import repository
-from app.features.memberships.enums import MembershipRole
+from app.features.empresas.memberships.enums import MembershipRole
 from app.features.users.enums import UserStatus
 from app.features.users.schema import User
 
@@ -24,6 +24,14 @@ def count_active_users_by_role(db: Session, empresa_id: str, role) -> int:
 
 def count_active_users_by_roles(db: Session, empresa_id: str, roles: list[MembershipRole]) -> int:
     return repository.count_active_users_by_roles(db, empresa_id, roles)
+
+
+def find_user_by_empresa_and_role(db: Session, empresa_id: str, role: MembershipRole) -> User | None:
+    return repository.get_user_by_empresa_and_role(db, empresa_id, role)
+
+
+def user_email_exists(db: Session, normalized_email: str) -> bool:
+    return repository.user_email_exists(db, normalized_email.strip().lower())
 
 
 def create_user(

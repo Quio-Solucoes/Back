@@ -7,7 +7,7 @@ from app.features.crm.dtos import ContractSignedRequest, LeadUpdateContractReque
 from app.features.crm.enums import ContractStatus, LeadStatus
 from app.features.crm.repository import create_lead as repo_create_lead
 from app.features.crm.repository import get_lead, list_leads, save
-from app.features.invites.service import create_franchise_invite
+from app.features.empresas.invites.service import create_franchise_invite
 from app.features.crm.dtos_nfe import EnableNfeRequest, EnableNfeResponse
 
 

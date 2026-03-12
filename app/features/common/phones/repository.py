@@ -1,4 +1,4 @@
-from app.features.common.address.schema import Phone
+from app.features.common.phones.schema import Phone
 from sqlalchemy import delete, select, update
 from sqlalchemy.orm import Session, selectinload
 

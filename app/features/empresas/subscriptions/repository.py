@@ -1,7 +1,7 @@
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.features.subscriptions.schema import Subscription
+from app.features.empresas.subscriptions.schema import Subscription
 
 
 def get_latest_subscription_by_empresa_id(db: Session, empresa_id: str) -> Subscription | None:

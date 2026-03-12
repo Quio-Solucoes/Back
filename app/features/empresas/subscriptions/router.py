@@ -3,9 +3,9 @@ from sqlalchemy.orm import Session
 
 from app.db.db import get_db
 from app.features.auth.dependencies import require_roles
-from app.features.subscriptions.dtos import SubscriptionResponse, UpdatePlanRequest
-from app.features.subscriptions.service import require_empresa_subscription, update_plan
-from app.features.memberships.enums import MembershipRole
+from app.features.empresas.subscriptions.dtos import SubscriptionResponse, UpdatePlanRequest
+from app.features.empresas.subscriptions.service import require_empresa_subscription, update_plan
+from app.features.empresas.memberships.enums import MembershipRole
 from app.features.users.schema import User
 
 
