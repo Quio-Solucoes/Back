@@ -1,20 +1,33 @@
 from fastapi import HTTPException
 
-from app.features.ambientes.componentes.model import Componente
+
 from app.features.chat.enum_states import ESTADOS
 from app.features.chat.helpers_tabbles import normalizar
 from app.features.conversations.store import get_conversa
+from app.features.empresas.memberships.enums import MembershipRole
+from app.features.orcamento.ambientes.componentes.model import Componente
 from app.features.orcamento.catalogo.catalogo_repository import buscar_catalogo_componentes
+from app.features.orcamento.pricing import calcular_total_movel, requires_owner_admin_for_descontos
 
 
 CATALOGO = buscar_catalogo_componentes()
 
 
-def obter_orcamento(session_id: str) -> dict:
+def obter_orcamento(
+    session_id: str,
+    desconto_cliente_pct: float = 0.0,
+    taxa_arquiteto_pct: float = 0.0,
+    user_role: MembershipRole | None = None,
+    lucro_liquido_pct: float = 0.0,
+    consultor_pct: float | None = None,
+) -> dict:
     conversa = get_conversa(session_id)
 
     if not conversa:
         return {"moveis": [], "total": 0, "finalizado": False}
+
+    if requires_owner_admin_for_descontos(desconto_cliente_pct, taxa_arquiteto_pct, user_role or MembershipRole.COLABORADOR):
+        raise HTTPException(status_code=403, detail="Desconto/taxa acima de 2% requer OWNER ou ADMIN")
 
     moveis = []
     total_geral = 0.0
@@ -31,7 +44,14 @@ def obter_orcamento(session_id: str) -> dict:
             for c in config.componentes
         ]
 
-        total_movel = config.total_geral()
+        base_total = config.total_geral()
+        total_movel = calcular_total_movel(
+            base_total=base_total,
+            lucro_liquido_pct=lucro_liquido_pct,
+            desconto_cliente_pct=desconto_cliente_pct,
+            comissao_arquiteto_pct=taxa_arquiteto_pct,
+            consultor_pct=consultor_pct if consultor_pct is not None else 0.04,
+        )
         total_geral += total_movel
 
         moveis.append(

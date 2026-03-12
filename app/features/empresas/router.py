@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
+from app.features.empresas.memberships.enums import MembershipRole
 from sqlalchemy.orm import Session
 
 from app.db.db import get_db
 from app.features.auth.dependencies import get_current_user, require_internal_api_key, require_roles
 from app.features.empresas.dtos import EmpresaResponse, EmpresaUpdateRequest
 from app.features.empresas.service import list_empresas, require_empresa_with_contacts, update_empresa
-from app.features.users.enums import UserRole
 from app.features.users.schema import User
 
 
@@ -25,7 +25,7 @@ def get_my_company(
 def update_my_company(
     payload: EmpresaUpdateRequest,
     db: Session = Depends(get_db),
-    current_user: User = Depends(require_roles(UserRole.OWNER, UserRole.ADMIN)),
+    current_user: User = Depends(require_roles(MembershipRole.OWNER, MembershipRole.ADMIN)),
 ) -> EmpresaResponse:
     empresa = require_empresa_with_contacts(db, current_user.empresa_id)
     updated = update_empresa(db, empresa, payload)

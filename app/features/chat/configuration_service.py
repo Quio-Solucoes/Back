@@ -1,5 +1,5 @@
 
-from app.features.ambientes.moveis.model import ConfiguracaoMovel
+from app.features.orcamento.ambientes.moveis.model import ConfiguracaoMovel
 from app.features.orcamento.catalog.repository import buscar_componentes_do_movel
 
 

@@ -19,6 +19,7 @@ class Empresa(Base):
     razao_social: Mapped[str] = mapped_column(String(255), nullable=False)
     nome_fantasia: Mapped[str | None] = mapped_column(String(255), nullable=True)
     cnpj: Mapped[str | None] = mapped_column(String(18), unique=True, nullable=True)
+    slug: Mapped[str | None] = mapped_column(String(255), unique=True, nullable=True)
     status: Mapped[EmpresaStatus] = mapped_column(
         Enum(EmpresaStatus, name="empresa_status"),
         default=EmpresaStatus.ACTIVE,
@@ -29,7 +30,7 @@ class Empresa(Base):
         DateTime(timezone=True), default=utcnow, onupdate=utcnow, nullable=False
     )
 
-    users = relationship("User", back_populates="empresa", cascade="all, delete-orphan")
+    memberships = relationship("Membership", back_populates="empresa", cascade="all, delete-orphan")
     subscriptions = relationship("Subscription", back_populates="empresa", cascade="all, delete-orphan")
     address = relationship("Address", back_populates="empresa", uselist=False, cascade="all, delete-orphan")
     phones = relationship("Phone", back_populates="empresa", cascade="all, delete-orphan")
@@ -38,3 +39,8 @@ class Empresa(Base):
     def addresses(self) -> list:
         # Compatibilidade temporaria para respostas que ainda esperam lista.
         return [self.address] if self.address else []
+
+    @property
+    def users(self) -> list:
+        # Compatibilidade: expõe usuários via memberships sem manter FK direta.
+        return [m.user for m in self.memberships if m.user]

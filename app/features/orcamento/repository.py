@@ -4,6 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session, selectinload
 
 from app.features.orcamento.schema import Orcamento, OrcamentoItem, OrcamentoItemComponente
+from app.features.orcamento.pricing import calcular_total_movel
 
 
 def _money(value: float | int) -> Decimal:
@@ -17,6 +18,10 @@ def save_finalized_orcamento(
     moveis_configurados: list,
     pdf_filename: str | None = None,
     status: str = "FINALIZADO",
+    desconto_cliente_pct: float = 0.0,
+    taxa_arquiteto_pct: float = 0.0,
+    lucro_liquido_pct: float = 0.0,
+    consultor_pct: float | None = None,
 ) -> Orcamento:
     orcamento = Orcamento(
         session_id=session_id,
@@ -30,7 +35,14 @@ def save_finalized_orcamento(
     for item_idx, config in enumerate(moveis_configurados, start=1):
         preco_movel = float(getattr(config, "preco_atual", 0) or 0)
         total_componentes = float(sum(comp.total() for comp in getattr(config, "componentes", [])))
-        total_item = float(config.total_geral())
+        base_total_item = float(config.total_geral())
+        total_item = calcular_total_movel(
+            base_total=base_total_item,
+            lucro_liquido_pct=lucro_liquido_pct,
+            desconto_cliente_pct=desconto_cliente_pct,
+            comissao_arquiteto_pct=taxa_arquiteto_pct,
+            consultor_pct=consultor_pct if consultor_pct is not None else 0.04,
+        )
         total_geral += total_item
 
         item = OrcamentoItem(

@@ -6,6 +6,7 @@ from app.features.chat.router import router as chat_router
 from app.features.chat.voz.router import router as chat_voice_router
 from app.features.conversations.router import router as conversations_router
 from app.features.empresas.router import router as empresas_router
+from app.features.crm.router import router as crm_router
 from app.features.health.router import router as health_router
 from app.features.onboarding.router import router as onboarding_router
 from app.features.orcamento.pdf.router import router as orcamento_pdf_router
@@ -44,6 +45,7 @@ def create_app() -> FastAPI:
     application.include_router(health_router)
     application.include_router(auth_router)
     application.include_router(onboarding_router)
+    application.include_router(crm_router)
     application.include_router(users_router)
     application.include_router(empresas_router)
     application.include_router(subscriptions_router)

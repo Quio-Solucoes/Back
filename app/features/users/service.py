@@ -1,9 +1,8 @@
-from datetime import datetime, timezone
-
 from sqlalchemy.orm import Session
 
 from app.features.users import repository
-from app.features.users.enums import UserRole, UserStatus
+from app.features.memberships.enums import MembershipRole
+from app.features.users.enums import UserStatus
 from app.features.users.schema import User
 
 
@@ -19,33 +18,24 @@ def list_empresa_users(db: Session, empresa_id: str) -> list[User]:
     return repository.list_users_by_empresa(db, empresa_id)
 
 
-def count_active_users_by_role(db: Session, empresa_id: str, role: UserRole) -> int:
+def count_active_users_by_role(db: Session, empresa_id: str, role) -> int:
     return repository.count_active_users_by_role(db, empresa_id, role)
 
 
-def set_last_login_now(db: Session, user: User) -> None:
-    user.last_login_at = datetime.now(timezone.utc)
-    db.add(user)
-    db.commit()
+def count_active_users_by_roles(db: Session, empresa_id: str, roles: list[MembershipRole]) -> int:
+    return repository.count_active_users_by_roles(db, empresa_id, roles)
 
 
 def create_user(
     db: Session,
-    empresa_id: str,
     name: str,
-    email: str,
-    password_hash: str,
-    role: UserRole,
+    primary_email: str | None,
     status: UserStatus,
 ) -> User:
     user = User(
-        empresa_id=empresa_id,
         name=name,
-        email=email,
-        password_hash=password_hash,
-        role=role,
+        primary_email=primary_email,
         status=status,
-        email_verified=True,
     )
     db.add(user)
     db.commit()

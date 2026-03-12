@@ -1,5 +1,8 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
+from app.features.auth.dependencies import get_current_user
+from app.features.memberships.enums import MembershipRole
+from app.features.users.schema import User
 from app.features.orcamento.dtos import AtualizarComponenteRequest, EditarDimensaoRequest
 from app.features.orcamento.service import (
     atualizar_componente,
@@ -14,8 +17,23 @@ router = APIRouter(prefix="/orcamento", tags=["orcamento"])
 
 
 @router.get("/{session_id}")
-def get_orcamento(session_id: str) -> dict:
-    return obter_orcamento(session_id)
+def get_orcamento(
+    session_id: str,
+    desconto_cliente_pct: float = 0.0,
+    taxa_arquiteto_pct: float = 0.0,
+    lucro_liquido_pct: float = 0.0,
+    consultor_pct: float | None = None,
+    current_user: User = Depends(get_current_user),
+) -> dict:
+    role = getattr(current_user, "role", MembershipRole.COLABORADOR)
+    return obter_orcamento(
+        session_id=session_id,
+        desconto_cliente_pct=desconto_cliente_pct,
+        taxa_arquiteto_pct=taxa_arquiteto_pct,
+        user_role=role,
+        lucro_liquido_pct=lucro_liquido_pct,
+        consultor_pct=consultor_pct,
+    )
 
 
 @router.delete("/{session_id}/remover/{movel_id}")

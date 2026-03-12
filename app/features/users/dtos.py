@@ -3,10 +3,10 @@ from pydantic import BaseModel, Field, field_validator
 
 class UserResponse(BaseModel):
     id: str
-    empresa_id: str
+    empresa_id: str | None
     name: str
-    email: str
-    role: str
+    primary_email: str | None
+    role: str | None
     status: str
 
     @classmethod
@@ -15,16 +15,15 @@ class UserResponse(BaseModel):
             id=model.id,
             empresa_id=model.empresa_id,
             name=model.name,
-            email=model.email,
-            role=model.role.value,
+            primary_email=model.primary_email,
+            role=model.role.value if model.role else None,
             status=model.status.value,
         )
 
 
 class CreateUserInviteRequest(BaseModel):
     email: str = Field(min_length=3, max_length=255)
-    role: str = Field(pattern="^(ADMIN|MEMBER)$")
-    expires_in_days: int = Field(default=7, ge=1, le=30)
+    role: str = Field(pattern="^(OWNER|ADMIN|COLABORADOR|CONSULTOR|GESTOR_COMERCIAL)$")
 
     @field_validator("email")
     @classmethod
