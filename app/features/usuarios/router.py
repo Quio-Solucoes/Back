@@ -1,4 +1,4 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
 from app.features.usuarios.schemas import CreateUsuarioRequest, UsuarioResponse
 from app.features.usuarios.service import criar_usuario
