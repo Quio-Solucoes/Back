@@ -7,7 +7,7 @@ import pandas as pd
 
 from app.config.settings import EXCEL_TESTE_FILE, FOTOS_DIR, PUBLIC_BASE_URL
 from app.domain.models import ItemOrcamento, ProdutoCatalogo, VarianteProduto
-from app.features.chat.helpers_tabbles import normalizar
+from app.domain.text import normalizar
 
 
 def _parse_preco(valor: Any) -> float:
