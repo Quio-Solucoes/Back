@@ -3,8 +3,11 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 EXCEL_FILE = BASE_DIR / "orcamento_final.xlsx"
+EXCEL_TESTE_FILE = BASE_DIR / "orcamento_teste.xlsx"
 ORCAMENTOS_DIR = BASE_DIR / "orcamentos"
+FOTOS_DIR = BASE_DIR / "app" / "features" / "fotos"
 APP_ENV = os.getenv("APP_ENV", os.getenv("ENV", "development")).lower()
+PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "").rstrip("/")
 
 CORS_ORIGINS = [
     "http://localhost:3000",

@@ -326,3 +326,82 @@ def salvar_pdf_local(moveis_configurados, session_id):
         output.write(buffer.getvalue())
 
     return filename
+
+
+def gerar_pdf_itens_orcamento(itens_por_vista: dict, session_id: str) -> io.BytesIO:
+    """
+    Gera PDF simples para o fluxo novo (itens por vista).
+    Mantem o visual base (cabecalho / info / rodape) do PDF atual.
+    """
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, leftMargin=1.2 * cm, rightMargin=1.2 * cm, topMargin=1.2 * cm)
+
+    data_hora = datetime.now().strftime("%d/%m/%Y %H:%M")
+    elements: list = []
+
+    elements.append(_create_header_table())
+    elements.append(Spacer(1, 0.35 * cm))
+    elements.append(_create_info_line(data_hora))
+    elements.append(Spacer(1, 0.35 * cm))
+
+    for table in _create_client_data_table():
+        elements.append(table)
+
+    header = ["Vista", "Produto", "Dimensao", "Cor", "Qtd", "Unit.", "Subtotal"]
+    rows = [header]
+
+    total_geral = 0.0
+    for vista_id, itens in (itens_por_vista or {}).items():
+        for item in itens:
+            subtotal = float(item.subtotal())
+            total_geral += subtotal
+            rows.append(
+                [
+                    str(vista_id),
+                    str(getattr(item, "nome", "")),
+                    str(getattr(item, "dimensao", "")),
+                    str(getattr(item, "cor", "")),
+                    str(int(getattr(item, "quantidade", 0) or 0)),
+                    _brl(float(getattr(item, "preco_unitario", 0.0) or 0.0)),
+                    _brl(subtotal),
+                ]
+            )
+
+    if len(rows) == 1:
+        rows.append(["-", "Nenhum item no orcamento", "-", "-", "-", "-", "0,00"])
+
+    table = Table(
+        rows,
+        colWidths=[2.1 * cm, 5.6 * cm, 3.2 * cm, 2.2 * cm, 1.1 * cm, 2.1 * cm, 2.3 * cm],
+        repeatRows=1,
+    )
+    table.setStyle(
+        TableStyle(
+            [
+                ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#f0f0f0")),
+                ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+                ("FONTSIZE", (0, 0), (-1, 0), 9),
+                ("FONTSIZE", (0, 1), (-1, -1), 8),
+                ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#c9c9c9")),
+                ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                ("ALIGN", (4, 1), (4, -1), "RIGHT"),
+                ("ALIGN", (5, 1), (6, -1), "RIGHT"),
+                ("LEFTPADDING", (0, 0), (-1, -1), 6),
+                ("RIGHTPADDING", (0, 0), (-1, -1), 6),
+                ("TOPPADDING", (0, 0), (-1, -1), 4),
+                ("BOTTOMPADDING", (0, 0), (-1, -1), 4),
+            ]
+        )
+    )
+
+    elements.append(Spacer(1, 0.4 * cm))
+    elements.append(table)
+    elements.append(Spacer(1, 0.5 * cm))
+    elements.append(_create_total_section(total_geral))
+
+    for info in _create_footer_info():
+        elements.append(info)
+
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer
