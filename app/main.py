@@ -1,12 +1,14 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.features.auth.router import router as auth_router
 from app.features.chat.router import router as chat_router
 from app.features.chat.voz.router import router as chat_voice_router
 from app.features.conversations.router import router as conversations_router
 from app.features.health.router import router as health_router
 from app.features.orcamento.router import router as orcamento_router
 from app.features.system.router import router as system_router
+from app.features.usuarios.router import router as usuarios_router
 from app.config.settings import CORS_ALLOW_ALL, CORS_ORIGINS
 
 
@@ -30,6 +32,8 @@ def create_app() -> FastAPI:
             allow_headers=["*"],
         )
 
+    application.include_router(auth_router)
+    application.include_router(usuarios_router)
     application.include_router(chat_router)
     application.include_router(chat_voice_router)
     application.include_router(orcamento_router)
