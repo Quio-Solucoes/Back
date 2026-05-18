@@ -81,3 +81,52 @@ class Conversa:
     configuracao: Optional[ConfiguracaoMovel] = None
     categoria_selecionada: Optional[str] = None
     moveis_orcados: list[ConfiguracaoMovel] = field(default_factory=list)
+    itens_por_vista: dict[str, list["ItemOrcamento"]] = field(default_factory=dict)
+    vista_atual: str = "frontal"
+    finalizado: bool = False
+
+
+@dataclass
+class ProdutoCatalogo:
+    id: int
+    nome: str
+    descricao: str = ""
+    imagem: str = ""
+
+
+@dataclass
+class VarianteProduto:
+    produto_id: int
+    dimensao: str
+    cor: str
+    preco: float
+
+
+@dataclass
+class ItemOrcamento:
+    produto: ProdutoCatalogo
+    variante: VarianteProduto
+    quantidade: int = 1
+
+    @property
+    def nome(self) -> str:
+        return self.produto.nome
+
+    @property
+    def produto_id(self) -> int:
+        return self.produto.id
+
+    @property
+    def dimensao(self) -> str:
+        return self.variante.dimensao
+
+    @property
+    def cor(self) -> str:
+        return self.variante.cor
+
+    @property
+    def preco_unitario(self) -> float:
+        return float(self.variante.preco)
+
+    def subtotal(self) -> float:
+        return self.preco_unitario * int(self.quantidade or 0)

@@ -3,9 +3,12 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parents[2]
 EXCEL_FILE = BASE_DIR / "orcamento_final.xlsx"
+EXCEL_TESTE_FILE = BASE_DIR / "orcamento_teste.xlsx"
 ORCAMENTOS_DIR = BASE_DIR / "orcamentos"
 SQLITE_DB_PATH = Path(os.getenv("SQLITE_DB_PATH", str(BASE_DIR / "quio.sqlite3")))
+FOTOS_DIR = BASE_DIR / "app" / "features" / "fotos"
 APP_ENV = os.getenv("APP_ENV", os.getenv("ENV", "development")).lower()
+PUBLIC_BASE_URL = os.getenv("PUBLIC_BASE_URL", "").rstrip("/")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
 ACCESS_TOKEN_EXPIRE_SECONDS = int(os.getenv("ACCESS_TOKEN_EXPIRE_SECONDS", "3600"))
