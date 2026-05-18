@@ -1,7 +1,19 @@
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from typing import Optional
+from uuid import uuid4
 
 from app.domain.states import ESTADOS
+
+
+@dataclass
+class Usuario:
+    nome: str
+    email: str
+    telefone: str
+    senha_hash: str
+    id: str = field(default_factory=lambda: str(uuid4()))
+    criado_em: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 @dataclass

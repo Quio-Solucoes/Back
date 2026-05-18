@@ -1,19 +1,21 @@
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 
 from app.features.system.service import download_pdf, status_orcamento
 from app.config.settings import APP_ENV, FOTOS_DIR
+from app.features.auth.dependencies import require_permission
+from app.domain.models import Usuario
 
-router = APIRouter(tags=["system"])
+router = APIRouter(tags=["system"], dependencies=[Depends(require_permission)])
 
 
 @router.get("/download-pdf/{session_id}")
-def get_download_pdf(session_id: str):
-    return download_pdf(session_id)
+def get_download_pdf(session_id: str, user: Usuario = Depends(require_permission)):
+    return download_pdf(session_id, user_id=user.id)
 
 
 @router.get("/status/{session_id}")
-def get_status_orcamento(session_id: str) -> dict:
-    return status_orcamento(session_id)
+def get_status_orcamento(session_id: str, user: Usuario = Depends(require_permission)) -> dict:
+    return status_orcamento(session_id, user_id=user.id)
 
 
 @router.get("/_debug/routes")
